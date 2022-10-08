@@ -41,19 +41,19 @@ class EcommerceService(val ecommerceRepo: EcommerceRepo) {
     fun searchData(searchParams: SearchParams, pageable: Pageable): Response {
 
         if(!searchParams.country.isNullOrEmpty()) {
-            return Response(true, null, ecommerceRepo.findByCountryLike(searchParams.country, pageable))
+            return Response(true, null, ecommerceRepo.findByCountryContainingIgnoreCase(searchParams.country, pageable))
         }
 
         if(!searchParams.customerId.isNullOrEmpty()) {
-            return Response(true, null, ecommerceRepo.findByCustomerIdLike(searchParams.customerId, pageable))
+            return Response(true, null, ecommerceRepo.findByCustomerIdContainingIgnoreCase(searchParams.customerId, pageable))
         }
 
         if(!searchParams.description.isNullOrEmpty()) {
-            return Response(true, null, ecommerceRepo.findByDescriptionLike(searchParams.description, pageable))
+            return Response(true, null, ecommerceRepo.findByDescriptionContainingIgnoreCase(searchParams.description, pageable))
         }
 
         if(!searchParams.invoiceNumber.isNullOrEmpty()) {
-            return Response(true, null, ecommerceRepo.findByInvoiceNumberLike(searchParams.invoiceNumber, pageable))
+            return Response(true, null, ecommerceRepo.findByInvoiceNumberContainingIgnoreCase(searchParams.invoiceNumber, pageable))
         }
 
         if(searchParams.quantity != null) {
@@ -61,7 +61,7 @@ class EcommerceService(val ecommerceRepo: EcommerceRepo) {
         }
 
         if(!searchParams.stockCode.isNullOrEmpty()) {
-            return Response(true, null, ecommerceRepo.findByStockCodeLike(searchParams.stockCode, pageable))
+            return Response(true, null, ecommerceRepo.findByStockCodeContainingIgnoreCase(searchParams.stockCode, pageable))
         }
 
         if(searchParams.unitPrice != null) {
