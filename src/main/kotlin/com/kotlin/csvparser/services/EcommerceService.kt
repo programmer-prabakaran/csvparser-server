@@ -6,27 +6,19 @@ import com.kotlin.csvparser.pojos.SearchParams
 import com.kotlin.csvparser.pojos.UploadResponse
 import com.kotlin.csvparser.repositories.EcommerceRepo
 import com.opencsv.CSVReader
-import org.springframework.beans.support.PagedListHolder
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import java.awt.print.Book
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.EntityManager
-import javax.persistence.criteria.CriteriaQuery
-import javax.persistence.criteria.Predicate
-import javax.persistence.criteria.Root
 
 
 @Service
-class EcommerceService(val ecommerceRepo: EcommerceRepo, val em: EntityManager) {
+class EcommerceService(val ecommerceRepo: EcommerceRepo) {
 
     fun getAllData(pageable: Pageable): Response {
         val data: Page<Ecommerce> = ecommerceRepo.findAll(pageable)
@@ -47,15 +39,9 @@ class EcommerceService(val ecommerceRepo: EcommerceRepo, val em: EntityManager) 
     }
 
     fun searchData(searchParams: SearchParams, pageable: Pageable): Response {
-//        val cb = em.criteriaBuilder
-//        val cq: CriteriaQuery<Ecommerce> = cb.createQuery(Ecommerce::class.java)
-//
-//        val book: Root<Ecommerce> = cq.from(Ecommerce::class.java)
-//        val predicates: MutableList<Predicate> = mutableListOf()
 
         if(!searchParams.country.isNullOrEmpty()) {
             return Response(true, null, ecommerceRepo.findByCountryLike(searchParams.country, pageable))
-            //predicates.add(cb.like(book.get("country"), "%"+searchParams.country+"%"))
         }
 
         if(!searchParams.customerId.isNullOrEmpty()) {
@@ -81,7 +67,6 @@ class EcommerceService(val ecommerceRepo: EcommerceRepo, val em: EntityManager) 
         if(searchParams.unitPrice != null) {
             return Response(true, null, ecommerceRepo.findByUnitPrice(searchParams.unitPrice, pageable))
         }
-        //cq.where(*predicates.toTypedArray())
 
         return Response(false, "Search failed", null)
     }
@@ -101,8 +86,6 @@ class EcommerceService(val ecommerceRepo: EcommerceRepo, val em: EntityManager) 
     }
 
     fun parseData(fileInput: Optional<MultipartFile>): Response {
-        //val file = File("src/main/resources/static/data.csv")
-        //var ips = InputStreamReader(file.inputStream())
         if(fileInput.isEmpty) {
             return Response(false, "File is not valid", null)
         }
@@ -111,7 +94,6 @@ class EcommerceService(val ecommerceRepo: EcommerceRepo, val em: EntityManager) 
         val reader = BufferedReader(ips)
         try {
             val csvReader = CSVReader(reader)
-            //println("Total file row count - "+csvReader.count())
             var line = csvReader.readNext()
             val list: MutableList<List<String>> = mutableListOf()
             while (line != null) {
@@ -123,7 +105,6 @@ class EcommerceService(val ecommerceRepo: EcommerceRepo, val em: EntityManager) 
             list.stream().skip(1).forEach{
                 samples.add(Ecommerce(null, it[0],it[1],it[2],it[3].toLong(), getParsedDate(it[4]), it[5].toDouble(), it[6], it[7]))
             }
-            //println("Total data process row count - "+samples.count())
             if(samples.isNotEmpty()) {
                 val updatedData = ecommerceRepo.saveAll(samples)
                 val obj = UploadResponse(updatedData.count())
