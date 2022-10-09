@@ -12,7 +12,7 @@ data class Ecommerce(
     val invoiceNumber: String,
     val stockCode: String,
     val description: String,
-    val quantity: Long,
+    val quantity: Int,
     val invoiceDate: LocalDateTime,
     val unitPrice: Double,
     val customerId: String,

@@ -21,7 +21,7 @@ import java.util.*
 class EcommerceResource(val ecommerceService: EcommerceService) {
 
     @GetMapping
-    fun getData(@RequestParam(name = "page", defaultValue = "0") page: Int, @RequestParam(name = "size", defaultValue = "50") size: Int): Response {
+    fun getData(@RequestParam(name = "page", defaultValue = "0") page: Int, @RequestParam(name = "size", defaultValue = "10") size: Int): Response {
         val request: Pageable = PageRequest.of(page, size)
         return ecommerceService.getAllData(request)
     }
@@ -31,10 +31,10 @@ class EcommerceResource(val ecommerceService: EcommerceService) {
         return ecommerceService.parseCSV(file)
     }
 
-    @PostMapping("/search")
-    fun searchData(@RequestBody searchParams: SearchParams, @RequestParam(name = "page", defaultValue = "0") page: Int, @RequestParam(name = "size", defaultValue = "50") size: Int): Response {
+    @PostMapping("/search/criteria")
+    fun searchCriteriaData(@RequestBody searchParams: SearchParams, @RequestParam(name = "page", defaultValue = "0") page: Int, @RequestParam(name = "size", defaultValue = "10") size: Int): Response {
         val request: Pageable = PageRequest.of(page, size)
-        return ecommerceService.searchData(searchParams, request)
+        return ecommerceService.searchCriteria(searchParams, request)
     }
 
 }
